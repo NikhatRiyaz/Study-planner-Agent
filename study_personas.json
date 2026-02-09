@@ -1,0 +1,32 @@
+[
+  {
+    "input": {
+      "subjects": ["Math", "Physics", "Chemistry"],
+      "daily_time_minutes": 120,
+      "exam_date": "2026-03-20",
+      "unavailable": []
+    },
+    "expected": { "max_overload_days": 0, "min_revision_ratio": 0.20 },
+    "metadata": { "persona": "STEM_12th", "difficulty_mix": "H/M/H", "version": 1 }
+  },
+  {
+    "input": {
+      "subjects": ["Biology", "English", "History"],
+      "daily_time_minutes": 90,
+      "exam_date": "2026-03-15",
+      "unavailable": ["2026-02-14", "2026-02-21"]
+    },
+    "expected": { "max_overload_days": 0, "min_revision_ratio": 0.20 },
+    "metadata": { "persona": "BioArts", "difficulty_mix": "M/L/L", "version": 1 }
+  },
+  {
+    "input": {
+      "subjects": ["CS", "Math", "Economics"],
+      "daily_time_minutes": 150,
+      "exam_date": "2026-04-05",
+      "unavailable": ["2026-03-01", "2026-03-08", "2026-03-15"]
+    },
+    "expected": { "max_overload_days": 0, "min_revision_ratio": 0.25 },
+    "metadata": { "persona": "CS_Undergrad", "difficulty_mix": "H/H/M", "version": 1 }
+  }
+]
