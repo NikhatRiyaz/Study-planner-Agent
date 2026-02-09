@@ -1,22 +1,20 @@
-# Google ADK Study Planner Agent (with Opik Observability)
+# Online Evaluation Rules — Google ADK Study Planner Agent
+This guide walks you through **creating Online Evaluation Rules in Opik** for the Study Planner Agent.  
+Online evaluations automatically score **every production trace** using LLM‑as‑judge prompts you define.
 
-A multi‑agent CLI application that generates **realistic, sustainable study plans** with **spaced revision**, **load smoothing**, and a **final consolidation buffer**—fully traced with **Opik** for end‑to‑end observability. The pipeline uses **Google ADK** for agent orchestration and **Gemini** via the **Google GenAI Python client**. [1](blob:https://www.microsoft365.com/75deb6e8-2fe6-4c2d-b991-9bd59e6158cb)
-
----
-
-## ✨ Features
-
-- **Multi‑agent pipeline**  
-  `StudyPlanner` → `PlanAuditor` → `StudyCoach`, orchestrated by `StudyMasterAgent` (via a `SequentialAgent`). [1](blob:https://www.microsoft365.com/75deb6e8-2fe6-4c2d-b991-9bd59e6158cb)
-- **Built‑in tools for auditing plans**  
-  `compute_study_metrics` (overload days, variance, revision ratio, final buffer) and `syllabus_coverage` (minutes per subject). [1](blob:https://www.microsoft365.com/75deb6e8-2fe6-4c2d-b991-9bd59e6158cb)
-- **Observability with Opik**  
-  OpikTracer hooks wrap all agent/model/tool calls; traces are flushed on exit and show up in your Opik project. [1](blob:https://www.microsoft365.com/75deb6e8-2fe6-4c2d-b991-9bd59e6158cb)
-- **Gemini 2.5 Flash‑Lite** as default model  
-  Fast, cost‑efficient, 1M‑token context; suitable for planner agents. (Model set in each Agent definition.) [1](blob:https://www.microsoft365.com/75deb6e8-2fe6-4c2d-b991-9bd59e6158cb)
-- **Simple CLI UX**  
-  Runs locally with Rich panels that show each agent’s output as the pipeline executes. [1](blob:https://www.microsoft365.com/75deb6e8-2fe6-4c2d-b991-9bd59e6158cb)
+Online Rules allow Opik to:
+- Score traces in real time
+- Use LLM-as-judge prompts (e.g., feasibility, clarity, safety) [1](https://www.datastudios.org/post/all-gemini-models-available-in-2025-complete-list-for-web-app-api-and-vertex-ai)
+- Apply rules to **Trace** or **Span** entities
+- Filter by tags, agent names, or attributes
+- Store results as feedback scores for dashboards and quality monitoring  
+Opik’s automation engine evaluates traces asynchronously and supports multiple evaluator types. [2](https://docs.oracle.com/en-us/iaas/Content/generative-ai/google-gemini-2-5-flash-lite.htm)
 
 ---
 
-## 🧱 Project Structure
+## 📌 PRE‑REQUISITES
+Before creating rules, confirm:
+
+1. Your **Study Planner app is already logging traces to Opik** using:
+   ```python
+   OpikTracer(tags=["study", "multi-agent"])
