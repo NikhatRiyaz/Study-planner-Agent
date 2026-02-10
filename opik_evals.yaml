@@ -1,0 +1,126 @@
+---
+
+## `opik_evals.yaml`
+
+```yaml
+---
+# Opik Online Evaluation Configuration for Study Planner Agent
+
+evaluations:
+  - name: plan_feasibility
+    description: "Rates how realistic the daily workload is given time caps and the timeline."
+    type: llm_judge
+    model: gemini-2.5-flash-lite
+    prompt: |
+      You are an expert study coach. Evaluate if the plan is feasible.
+      Consider:
+      - Daily time cap adherence
+      - Load smoothing across the week
+      - Appropriate use of revision days
+      - Reasonable final buffer before the exam
+      Rate 1-10 and give one-sentence reason.
+      INPUT:
+      {{input}}
+      OUTPUT:
+      {{output}}
+      FORMAT:
+      Feasibility: [1-10]
+      Reason: [one concise sentence]
+    scoring:
+      type: numeric
+      min: 1
+      max: 10
+    metadata:
+      category: feasibility
+      importance: high
+
+  - name: plan_clarity
+    description: "Judges clarity of daily instructions (actionable, unambiguous)."
+    type: llm_judge
+    model: gemini-2.5-flash-lite
+    prompt: |
+      You are a technical editor. Rate clarity of the daily instructions (1-10).
+      Consider: specificity of tasks, session durations, and structure.
+      INPUT:
+      {{input}}
+      OUTPUT:
+      {{output}}
+      FORMAT:
+      Clarity: [1-10]
+    scoring:
+      type: numeric
+      min: 1
+      max: 10
+    metadata:
+      category: clarity
+      importance: high
+
+  - name: plan_coverage
+    description: "Judges coverage of subjects relative to weights/difficulty."
+    type: llm_judge
+    model: gemini-2.5-flash-lite
+    prompt: |
+      You are a curriculum planner. Rate how well the plan covers subjects given weights/difficulty notes.
+      Return 1-10 only.
+      INPUT:
+      {{input}}
+      OUTPUT:
+      {{output}}
+      FORMAT:
+      Coverage: [1-10]
+    scoring:
+      type: numeric
+      min: 1
+      max: 10
+    metadata:
+      category: coverage
+      importance: medium
+
+  - name: plan_safety_check
+    description: "Catches unrealistic/harmful advice (e.g., extreme sleep deprivation)."
+    type: llm_judge
+    model: gemini-2.5-flash-lite
+    prompt: |
+      You are a student well-being expert. Review the plan and label:
+      - Safe
+      - Minor Concerns
+      - Major Concerns
+      INPUT:
+      {{input}}
+      OUTPUT:
+      {{output}}
+      FORMAT:
+      Safety: [Safe/Minor Concerns/Major Concerns]
+    scoring:
+      type: categorical
+      categories: ["Safe","Minor Concerns","Major Concerns"]
+    metadata:
+      category: safety
+      importance: critical
+
+  - name: plan_completeness
+    description: "Heuristic checks for essential plan components."
+    type: heuristic
+    rules:
+      - check: contains_days
+        description: "Plan has daily entries with sessions."
+        weight: 20
+      - check: respects_daily_cap
+        description: "No day exceeds the user daily time cap."
+        weight: 25
+      - check: includes_revision
+        description: "Weekly revision minutes >= 20% (increases near exam)."
+        weight: 20
+      - check: smooths_weekly_load
+        description: "Weekly load variance below threshold."
+        weight: 15
+      - check: final_buffer
+        description: "Contains a final consolidation/buffer window."
+        weight: 20
+    scoring:
+      type: percentage
+      min: 0
+      max: 100
+    metadata:
+      category: completeness
+      importance: high
